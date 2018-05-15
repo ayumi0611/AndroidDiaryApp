@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class DiaryContentProvider extends ContentProvider {
@@ -22,7 +23,8 @@ public class DiaryContentProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, DiaryContract.Diary.TABLE_NAME, DIARY);
         uriMatcher.addURI(AUTHORITY, DiaryContract.Diary.TABLE_NAME+ "/#", DIARY_ITEM);
     }
-    
+
+    private DiaryOpenHelper diaryOpenHelper;
 
 
     public DiaryContentProvider() {
@@ -49,15 +51,37 @@ public class DiaryContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        // TODO: Implement this to initialize your content provider on startup.
-        return false;
+        diaryOpenHelper = new DiaryOpenHelper(getContext());
+        return true;
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
-                        String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public Cursor query(
+            Uri uri,
+            String[] projection,
+            String selection,
+            String[] selectionArgs,
+            String sortOrder
+    ) {
+        switch (uriMatcher.match(uri)) {
+            case DIARY:
+            case DIARY_ITEM:
+                break;
+                default:
+                    throw new IllegalArgumentException("Invalied URI: " + uri);
+        }
+        SQLiteDatabase db = diaryOpenHelper.getReadableDatabase();
+        Cursor c = db.query(
+                DiaryContract.Diary.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+        return  c;
+
     }
 
     @Override
