@@ -13,7 +13,8 @@ public class DiaryOpenHelper extends SQLiteOpenHelper {
                     "_id integer primary key autoincrement, " +
                     "title text, " +
                     "body text, " +
-                    "date datetime default current_timestamp)";
+                    "created datetime default current_timestamp, " +
+                    "updated datetime default current_timestamp)";
     public static final String INIT_TABLE =
             "insert into diaries (title, body) values " +
                     "('t1', 'b1')," +

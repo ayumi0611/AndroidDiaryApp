@@ -11,7 +11,7 @@ public class DiaryContentProvider extends ContentProvider {
 
     public static final String AUTHORITY =
             "com.ayumitani.androiddiaryapp.DiaryContentProvider";
-    public static final Url CONTENT_URI =
+    public static final Uri CONTENT_URI =
             Uri.parse("content://" + AUTHORITY + "/" + DiaryContract.Diary.TABLE_NAME);
 
     // UriMatcher
@@ -68,7 +68,7 @@ public class DiaryContentProvider extends ContentProvider {
             case DIARY_ITEM:
                 break;
                 default:
-                    throw new IllegalArgumentException("Invalied URI: " + uri);
+                    throw new IllegalArgumentException("Invalid URI: " + uri);
         }
         SQLiteDatabase db = diaryOpenHelper.getReadableDatabase();
         Cursor c = db.query(
