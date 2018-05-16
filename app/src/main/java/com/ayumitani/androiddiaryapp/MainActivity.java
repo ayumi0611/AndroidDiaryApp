@@ -1,5 +1,6 @@
 package com.ayumitani.androiddiaryapp;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,12 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private SimpleCursorAdapter adapter;
+    public final static String EXTRA_MYID = "com.ayumitani.androiddiaryapp.MYID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         ListView myListView = (ListView) findViewById(R.id.myListView);
         myListView.setAdapter(adapter);
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(
+                    AdapterView<?> parent,
+                    View view,
+                    int position,
+                    long id
+            ) {
+                Intent intent = new Intent(MainActivity.this, FormActivity.class);
+                intent.putExtra(EXTRA_MYID, id);
+                startActivity(intent);
+            }
+        });
 
         getLoaderManager().initLoader(0, null, this);
     }
