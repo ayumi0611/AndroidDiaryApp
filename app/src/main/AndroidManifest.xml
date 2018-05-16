@@ -21,7 +21,9 @@
             android:name=".DiaryContentProvider"
             android:authorities="com.ayumitani.androiddiaryapp.DiaryContentProvider"
             android:enabled="true"
-            android:exported="false"></provider>
+            android:exported="false" />
+
+        <activity android:name=".FormActivity"></activity>
     </application>
 
 </manifest>
