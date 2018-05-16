@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -20,6 +21,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String[] from = {
+                DiaryContract.Diary.COL_TITLE,
+                DiaryContract.Diary.COL_UPDATED
+        };
+
+        int[] to = {
+                android.R.id.text1,
+                android.R.id.text2
+        };
+
+        adapter = new SimpleCursorAdapter(
+                this,
+                android.R.layout.simple_list_item_2,
+                null,
+                from,
+                to,
+                0
+        );
+
+        ListView myListView = (ListView) findViewById(R.id.myListView);
+        myListView.setAdapter(adapter);
 
         getLoaderManager().initLoader(0, null, this);
     }
