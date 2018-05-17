@@ -42,8 +42,15 @@ public class FormActivity extends AppCompatActivity {
 
         if (diaryId == 0) {
             // new diary
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("New diary");
+            }
+            updatedText.setText("Updated: -------");
         } else {
             // show diary
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Edit diary");
+            }
             Uri uri = ContentUris.withAppendedId(
                     DiaryContentProvider.CONTENT_URI,
                     diaryId
@@ -73,6 +80,13 @@ public class FormActivity extends AppCompatActivity {
             );
             c.close();
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem deleteItem = menu.findItem(R.id.action_delete);
+        if (diaryId == 0L) deleteItem.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -125,6 +139,10 @@ public class FormActivity extends AppCompatActivity {
             values.put(DiaryContract.Diary.COL_UPDATED, updated);
             if (diaryId == 0L) {
                 // new diary
+                getContentResolver().insert(
+                        DiaryContentProvider.CONTENT_URI,
+                        values
+                );
             } else {
                 // updated diary
                 Uri uri = ContentUris.withAppendedId(

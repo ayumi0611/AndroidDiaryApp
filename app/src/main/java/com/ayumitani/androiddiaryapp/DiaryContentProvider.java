@@ -1,6 +1,7 @@
 package com.ayumitani.androiddiaryapp;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -54,8 +55,21 @@ public class DiaryContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
+        if (uriMatcher.match(uri) != DIARY) {
+            throw new IllegalArgumentException("Invalid URI: " + uri);
+        }
+        SQLiteDatabase db = diaryOpenHelper.getWritableDatabase();
+        long newId = db.insert(
+                DiaryContract.Diary.TABLE_NAME,
+                null,
+                values
+        );
+        Uri newUri = ContentUris.withAppendedId(
+                DiaryContentProvider.CONTENT_URI,
+                newId
+        );
+        getContext().getContentResolver().notifyChange(newUri, null);
+        return newUri;
     }
 
     @Override
