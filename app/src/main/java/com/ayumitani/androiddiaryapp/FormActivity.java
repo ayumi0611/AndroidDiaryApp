@@ -27,6 +27,7 @@ public class FormActivity extends AppCompatActivity {
     private EditText titleText;
     private EditText bodyText;
     private TextView updatedText;
+    private TextView countText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class FormActivity extends AppCompatActivity {
         titleText = (EditText) findViewById(R.id.titleText);
         bodyText = (EditText) findViewById(R.id.bodyText);
         updatedText = (TextView) findViewById(R.id.updatedText);
+        countText = (TextView) findViewById(R.id.countText);
 
         Intent intent = getIntent();
         diaryId = intent.getLongExtra(MainActivity.EXTRA_MYID, 0L);
@@ -58,7 +60,8 @@ public class FormActivity extends AppCompatActivity {
             String[] projection = {
                     DiaryContract.Diary.COL_TITLE,
                     DiaryContract.Diary.COL_BODY,
-                    DiaryContract.Diary.COL_UPDATED
+                    DiaryContract.Diary.COL_UPDATED,
+                    DiaryContract.Diary.COL_COUNT_TEXT
             };
             Cursor c = getContentResolver().query(
                     uri,
@@ -77,6 +80,9 @@ public class FormActivity extends AppCompatActivity {
             updatedText.setText(
                     "Updated: " +
                             c.getString(c.getColumnIndex(DiaryContract.Diary.COL_UPDATED))
+            );
+            countText.setText(
+                    c.getString(c.getColumnIndex(DiaryContract.Diary.COL_COUNT_TEXT) )+ "文字"
             );
             c.close();
         }
@@ -125,6 +131,8 @@ public class FormActivity extends AppCompatActivity {
         String updated =
                 new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.US)
                         .format(new Date());
+        int countText =
+                bodyText.length();
 
         if (title.isEmpty()) {
             Toast.makeText(
@@ -137,6 +145,7 @@ public class FormActivity extends AppCompatActivity {
             values.put(DiaryContract.Diary.COL_TITLE, title);
             values.put(DiaryContract.Diary.COL_BODY, body);
             values.put(DiaryContract.Diary.COL_UPDATED, updated);
+            values.put(DiaryContract.Diary.COL_COUNT_TEXT, countText);
             if (diaryId == 0L) {
                 // new diary
                 getContentResolver().insert(

@@ -12,7 +12,7 @@ public final class DiaryContract {
         public static final String COL_BODY = "body";
         public static final String COL_CREATE = "created";
         public static final String COL_UPDATED = "updated";
-
+        public static final String COL_COUNT_TEXT = "countText";
 
     }
 }
