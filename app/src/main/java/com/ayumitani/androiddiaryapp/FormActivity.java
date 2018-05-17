@@ -2,9 +2,11 @@ package com.ayumitani.androiddiaryapp;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -80,6 +82,26 @@ public class FormActivity extends AppCompatActivity {
     }
 
     private void deleteDiary() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Diary")
+                .setMessage("Are you sure?")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Uri uri = ContentUris.withAppendedId(
+                                DiaryContentProvider.CONTENT_URI,
+                                diaryId
+                        );
+                        getContentResolver().delete(
+                                uri,
+                                DiaryContract.Diary._ID + " = ?",
+                                new String[] { Long.toString(diaryId)}
+                        );
+                        finish();
+                    }
+                })
+                .show();
 
     }
 

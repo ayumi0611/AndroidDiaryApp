@@ -32,8 +32,17 @@ public class DiaryContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        if (uriMatcher.match(uri) != DIARY_ITEM) {
+            throw new IllegalArgumentException("Invalid URI: " + uri);
+        }
+        SQLiteDatabase db = diaryOpenHelper.getWritableDatabase();
+        int deletedCount = db.delete(
+                DiaryContract.Diary.TABLE_NAME,
+                selection,
+                selectionArgs
+        );
+        getContext().getContentResolver().notifyChange(uri, null);
+        return deletedCount;
     }
 
     @Override
