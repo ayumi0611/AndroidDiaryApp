@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 null,
                 null,
                 DiaryContract.Diary.COL_UPDATED + " DESC"
-
         );
     }
 

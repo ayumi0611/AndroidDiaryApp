@@ -10,11 +10,13 @@
     <EditText
         android:id="@+id/titleText"
         android:inputType="textNoSuggestions"
+        android:hint="@string/hint_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/bodyText"
+        android:hint="@string/hint_body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
