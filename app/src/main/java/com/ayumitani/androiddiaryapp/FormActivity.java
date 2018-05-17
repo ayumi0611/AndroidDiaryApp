@@ -1,6 +1,7 @@
 package com.ayumitani.androiddiaryapp;
 
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.text.Normalizer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class FormActivity extends AppCompatActivity {
 
@@ -16,6 +24,7 @@ public class FormActivity extends AppCompatActivity {
 
     private EditText titleText;
     private EditText bodyText;
+    private TextView updatedText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +33,7 @@ public class FormActivity extends AppCompatActivity {
 
         titleText = (EditText) findViewById(R.id.titleText);
         bodyText = (EditText) findViewById(R.id.bodyText);
+        updatedText = (TextView) findViewById(R.id.updatedText);
 
         Intent intent = getIntent();
         diaryId = intent.getLongExtra(MainActivity.EXTRA_MYID, 0L);
@@ -38,7 +48,8 @@ public class FormActivity extends AppCompatActivity {
             );
             String[] projection = {
                     DiaryContract.Diary.COL_TITLE,
-                    DiaryContract.Diary.COL_BODY
+                    DiaryContract.Diary.COL_BODY,
+                    DiaryContract.Diary.COL_UPDATED
             };
             Cursor c = getContentResolver().query(
                     uri,
@@ -47,6 +58,18 @@ public class FormActivity extends AppCompatActivity {
                     new String[] { Long.toString(diaryId) },
                     null
             );
+            c.moveToFirst();
+            titleText.setText(
+                    c.getString(c.getColumnIndex(DiaryContract.Diary.COL_TITLE))
+            );
+            bodyText.setText(
+                    c.getString(c.getColumnIndex(DiaryContract.Diary.COL_BODY))
+            );
+            updatedText.setText(
+                    "Updated: " +
+                            c.getString(c.getColumnIndex(DiaryContract.Diary.COL_UPDATED))
+            );
+            c.close();
         }
     }
 
@@ -56,12 +79,57 @@ public class FormActivity extends AppCompatActivity {
         return true;
     }
 
+    private void deleteDiary() {
+
+    }
+
+    private void saveDiary() {
+        String title = titleText.getText().toString().trim();
+        String body = bodyText.getText().toString().trim();
+        String updated =
+                new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.US)
+                        .format(new Date());
+
+        if (title.isEmpty()) {
+            Toast.makeText(
+                    FormActivity.this,
+                    "Please enter title",
+                    Toast.LENGTH_LONG
+            ).show();
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(DiaryContract.Diary.COL_TITLE, title);
+            values.put(DiaryContract.Diary.COL_BODY, body);
+            values.put(DiaryContract.Diary.COL_UPDATED, updated);
+            if (diaryId == 0L) {
+                // new diary
+            } else {
+                // updated diary
+                Uri uri = ContentUris.withAppendedId(
+                        DiaryContentProvider.CONTENT_URI,
+                        diaryId
+                );
+                getContentResolver().update(
+                        uri,
+                        values,
+                        DiaryContract.Diary._ID + " = ?",
+                        new String[] { Long.toString(diaryId) }
+                );
+            }
+            finish();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+       switch (item.getItemId()) {
+           case R.id.action_delete:
+               deleteDiary();
+               break;
+           case R.id.action_save:
+               saveDiary();
+               break;
+       }
         return super.onOptionsItemSelected(item);
     }
 
